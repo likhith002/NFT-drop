@@ -1,6 +1,15 @@
 import React from "react";
 import { useAddress, useDisconnect, useMetamask } from "@thirdweb-dev/react";
-function NFTDrop() {
+import { GetServerSideProps } from "next";
+import { client, urlFor } from "../../sanity";
+import { Collection } from "../../typings";
+
+interface Props {
+  collection: Collection
+}
+
+
+function NFTDrop({collection}:Props) {
 
   const connectWithMetamask = useMetamask(); 
 
@@ -15,15 +24,15 @@ function NFTDrop() {
         <div className="flex flex-col items-center justify-center py-2 lg:min-h-screen ">
           <div className="bg-gradient-to-br from-yellow-400 to-purple-600 p-2 rounded-xl">
             <img
-              src="https://links.papareact.com/8sg"
+              src={urlFor(collection.previewImage).url()}
               alt=""
               className="w-44 rounded-xl object-cover hover:animate-rotate-y lg:h-96 lg:w-72"
             />  
           </div>
           <div className="text-center p-5 space-y-2">
-            <h1 className="text-6xl font-bold text-yellow-200">DAPPS</h1>
+            <h1 className="text-6xl font-bold text-yellow-200">{collection.nftCollectionName}</h1>
             <h2 className="text-xl text-gray-300">
-              A collections of decentralized applications
+              {collection.description}
             </h2>
           </div>
         </div>
@@ -50,12 +59,12 @@ function NFTDrop() {
 
         <div className="mt-10 flex flex-1 flex-col items-center space-y-6 text-center lg:space-y-0 lg:justify-center">
           <img
-            src="https://links.papareact.com/bdy"
+            src={urlFor(collection.mainImage).url()}
             className="w-80 object-cover pb-10 lg:h-40 "
             alt=""
           />
           <h1 className="font-bold text-3xl lg:font-extrabold ">
-            The coding club NFT drop
+           {collection.title}
           </h1>
           <p className="pt-2 text-xl text-green-500">
             13/21 NFT have been claimed
@@ -74,3 +83,46 @@ function NFTDrop() {
 }
 
 export default NFTDrop;
+
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const query = `*[_type == "collection" && slug.current == $id][0]{
+    _id,
+    title,
+    address,
+    description,
+    nftCollectionName,
+    mainImage {
+     asset
+  },
+  previewImage {
+    asset
+  },
+  slug {
+  current
+  },
+  creator -> {
+    _id,
+      name,
+      address,
+      slug {
+        current
+      },
+  },
+  }`
+
+  const collection = await client.fetch(query, {
+    id: params?.id,
+  })
+
+  if (!collection) {
+    return {
+      notFound: true,
+    }
+  }
+
+  return {
+    props: {
+      collection,
+    },
+  }
+}
