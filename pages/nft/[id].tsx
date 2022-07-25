@@ -143,7 +143,7 @@ function NFTDrop({ collection }: Props) {
             {" "}
             The
             <span className="font-extrabold underline decoration-pink-600/50   ">
-              Blazy
+              Storm
             </span>{" "}
             NFT Market Place
           </h1>

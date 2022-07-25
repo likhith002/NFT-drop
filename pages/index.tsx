@@ -12,16 +12,11 @@ interface Props {
 const Home = ({ collections }: Props) => {
   return (
     <div>
-      <Head>
-        <title>NFT drop</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <h1 className="w-52 cursor-pointer text-xl font-extralight sm:w-80">
+      <h1 className="w-52 cursor-pointer text-xl font-extralight sm:w-80   justify-center">
         {" "}
         The
         <span className="font-extrabold underline decoration-pink-600/50   ">
-          Blazy
+          Storm
         </span>{" "}
         NFT Market Place
       </h1>
